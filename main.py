@@ -14,8 +14,13 @@ class SevenSegmentDigitConfig:
 
 @dataclasses.dataclass
 class SevenSegmentNumberConfig:
+    digit_space: str = "   "
+
+
+@dataclasses.dataclass
+class SevenSegmentNumberConfig:
     digit_config: SevenSegmentDigitConfig = dataclasses.field(default_factory=SevenSegmentDigitConfig)
-    digit_space: str = "  "
+    number_config: SevenSegmentNumberConfig = dataclasses.field(default_factory=SevenSegmentNumberConfig)
 
 
 @dataclasses.dataclass
@@ -252,7 +257,7 @@ class SevenSegmentNumber:
     def lines(self) -> list[str]:
         lines = []
         for i in range(5):
-            line = self.config.digit_space.join([digit.lines[i] for digit in self.digits])
+            line = self.config.number_config.digit_space.join([digit.lines[i] for digit in self.digits])
             lines.append(line)
 
         return lines
