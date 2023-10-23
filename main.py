@@ -21,7 +21,7 @@ class SevenSegmentNumberConfig:
 
 
 @dataclasses.dataclass
-class SevenSegmentConfig:
+class SevenSegmentDisplayConfig:
     digit_config: SevenSegmentDigitConfig = dataclasses.field(default_factory=SevenSegmentDigitConfig)
     number_config: SevenSegmentNumberConfig = dataclasses.field(default_factory=SevenSegmentNumberConfig)
 
@@ -231,11 +231,11 @@ class SevenSegmentDigitDisplay:
         return cls(digit=SevenSegmentDigit.minus(), config=config)
 
 
-class SevenSegmentNumber:
-    def __init__(self, n: decimal.Decimal, precision: int, config: SevenSegmentConfig | None = None) -> None:
+class SevenSegmentDisplay:
+    def __init__(self, n: decimal.Decimal, precision: int, config: SevenSegmentDisplayConfig | None = None) -> None:
         self.n = n
         self.precision = precision
-        self.config = config or SevenSegmentConfig()
+        self.config = config or SevenSegmentDisplayConfig()
 
         self.digits = []
 
@@ -293,7 +293,7 @@ class SevenSegmentNumber:
 
 def main():
     for i in range(-10000, 10000):
-        number = SevenSegmentNumber(i, 0)
+        number = SevenSegmentDisplay(n=i, precision=2)
 
         print(number.n)
         print(number)
