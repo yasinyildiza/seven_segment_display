@@ -18,6 +18,7 @@ class SevenSegmentNumberConfig:
     digit_space: str = "   "
     decimal_point: str = " . "
     decimal_space: str = "   "
+    decimal_precision: int = 2
 
 
 @dataclasses.dataclass
@@ -232,14 +233,13 @@ class SevenSegmentDigitDisplay:
 
 
 class SevenSegmentDisplay:
-    def __init__(self, n: decimal.Decimal, precision: int, config: SevenSegmentDisplayConfig | None = None) -> None:
+    def __init__(self, n: decimal.Decimal, config: SevenSegmentDisplayConfig | None = None) -> None:
         self.n = n
-        self.precision = precision
         self.config = config or SevenSegmentDisplayConfig()
 
         self.digits = []
 
-        a = int(self.n * (10 ** self.precision))
+        a = int(self.n * (10 ** self.config.number_config.decimal_precision))
 
         if self.n == decimal.Decimal(0):
             degree = 0
@@ -266,13 +266,13 @@ class SevenSegmentDisplay:
         return self.config.number_config.decimal_point if i == 4 else self.config.number_config.decimal_space
 
     def integer_part(self, i: int) -> str:
-        return self.group_digits(digits=self.digits[0:-self.precision], i=i)
+        return self.group_digits(digits=self.digits[0:-self.config.number_config.decimal_precision], i=i)
 
     def decimal_part(self, i: int) -> str:
-        return self.group_digits(digits=self.digits[-self.precision:], i=i)
+        return self.group_digits(digits=self.digits[-self.config.number_config.decimal_precision:], i=i)
 
     def line(self, i: int) -> str:
-        if self.precision == 0:
+        if self.config.number_config.decimal_precision == 0:
             return self.group_digits(digits=self.digits, i=i)
 
         groups = [
@@ -293,9 +293,9 @@ class SevenSegmentDisplay:
 
 def main():
     for i in range(-10000, 10000):
-        number = SevenSegmentDisplay(n=i, precision=2)
+        number = SevenSegmentDisplay(n=decimal.Decimal(i))
 
-        print(number.n)
+        print(number.n.quantize(decimal.Decimal(f"0E-{number.config.number_config.decimal_precision}")))
         print(number)
 
 
