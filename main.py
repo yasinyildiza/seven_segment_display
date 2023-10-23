@@ -275,13 +275,13 @@ class SevenSegmentDisplay:
         if self.config.number_config.decimal_precision == 0:
             return self.group_digits(digits=self.digits, i=i)
 
-        groups = [
-            self.integer_part(i=i),
-            self.decimal_seperator(i=i),
-            self.decimal_part(i=i),
-        ]
-
-        return "".join(groups)
+        return "".join(
+            [
+                self.integer_part(i=i),
+                self.decimal_seperator(i=i),
+                self.decimal_part(i=i),
+            ]
+        )
 
     @property
     def lines(self) -> list[str]:
