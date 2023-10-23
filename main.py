@@ -239,6 +239,9 @@ class SevenSegmentDisplay:
 
         self.digits = []
 
+        if self.n < decimal.Decimal(0):
+            self.digits.append(SevenSegmentDigitDisplay.minus(config=self.config.digit_config))
+
         a = int(self.n * (10 ** self.config.number_config.decimal_precision))
 
         if self.n == decimal.Decimal(0):
@@ -255,9 +258,6 @@ class SevenSegmentDisplay:
             self.digits.append(digit)
 
             x -= k * e
-
-        if self.n < decimal.Decimal(0):
-            self.digits.insert(0, SevenSegmentDigitDisplay.minus(config=self.config.digit_config))
 
     def group_digits(self, digits: list[SevenSegmentDigitDisplay], i: int) -> str:
         return self.config.number_config.digit_space.join([digit.lines[i] for digit in digits])
