@@ -17,7 +17,7 @@ class SevenSegmentDigitConfig:
 class SevenSegmentNumberConfig:
     digit_space: str = "   "
     decimal_point: str = " . "
-    decimal_point_space: str = "   "
+    decimal_space: str = "   "
 
 
 @dataclasses.dataclass
@@ -263,7 +263,7 @@ class SevenSegmentDisplay:
         return self.config.number_config.digit_space.join([digit.lines[i] for digit in digits])
 
     def decimal_seperator(self, i: int) -> str:
-        return self.config.number_config.decimal_point if i == 4 else self.config.number_config.decimal_point_space
+        return self.config.number_config.decimal_point if i == 4 else self.config.number_config.decimal_space
 
     def integer_part(self, i: int) -> str:
         return self.group_digits(digits=self.digits[0:-self.precision], i=i)
