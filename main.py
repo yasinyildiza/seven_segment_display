@@ -1,4 +1,5 @@
 import dataclasses
+import decimal
 import math
 import typing
 
@@ -15,6 +16,8 @@ class SevenSegmentDigitConfig:
 @dataclasses.dataclass
 class SevenSegmentNumberConfig:
     digit_space: str = "   "
+    decimal_point: str = " . "
+    decimal_point_space: str = "   "
 
 
 @dataclasses.dataclass
@@ -229,18 +232,21 @@ class SevenSegmentDigitDisplay:
 
 
 class SevenSegmentNumber:
-    def __init__(self, n: int, config: SevenSegmentConfig | None = None) -> None:
+    def __init__(self, n: decimal.Decimal, precision: int, config: SevenSegmentConfig | None = None) -> None:
         self.n = n
+        self.precision = precision
         self.config = config or SevenSegmentConfig()
 
         self.digits = []
 
-        if self.n == 0:
+        a = int(self.n * (10 ** self.precision))
+
+        if self.n == decimal.Decimal(0):
             degree = 0
         else:
-            degree = int(math.log10(abs(self.n)))
+            degree = int(math.log10(abs(a)))
 
-        x = abs(self.n)
+        x = abs(a)
         for i in range(degree + 1):
             e = 10 ** (degree - i)
             k = int(x / e)
@@ -250,17 +256,36 @@ class SevenSegmentNumber:
 
             x -= k * e
 
-        if self.n < 0:
+        if self.n < decimal.Decimal(0):
             self.digits.insert(0, SevenSegmentDigitDisplay.minus(config=self.config.digit_config))
+
+    def group_digits(self, digits: list[SevenSegmentDigitDisplay], i: int) -> str:
+        return self.config.number_config.digit_space.join([digit.lines[i] for digit in digits])
+
+    def decimal_seperator(self, i: int) -> str:
+        return self.config.number_config.decimal_point if i == 4 else self.config.number_config.decimal_point_space
+
+    def integer_part(self, i: int) -> str:
+        return self.group_digits(digits=self.digits[0:-self.precision], i=i)
+
+    def decimal_part(self, i: int) -> str:
+        return self.group_digits(digits=self.digits[-self.precision:], i=i)
+
+    def line(self, i: int) -> str:
+        if self.precision == 0:
+            return self.group_digits(digits=self.digits, i=i)
+
+        groups = [
+            self.integer_part(i=i),
+            self.decimal_seperator(i=i),
+            self.decimal_part(i=i),
+        ]
+
+        return "".join(groups)
 
     @property
     def lines(self) -> list[str]:
-        lines = []
-        for i in range(5):
-            line = self.config.number_config.digit_space.join([digit.lines[i] for digit in self.digits])
-            lines.append(line)
-
-        return lines
+        return [self.line(i=i) for i in range(5)]
 
     def __str__(self) -> str:
         return "\n".join(self.lines)
@@ -268,7 +293,7 @@ class SevenSegmentNumber:
 
 def main():
     for i in range(-10000, 10000):
-        number = SevenSegmentNumber(i)
+        number = SevenSegmentNumber(i, 0)
 
         print(number.n)
         print(number)
