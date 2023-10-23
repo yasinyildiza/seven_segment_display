@@ -267,7 +267,6 @@ def main():
 
         print(number.n)
         print(number)
-        print("###")
 
 
 if __name__ == "__main__":
