@@ -18,7 +18,7 @@ class SevenSegmentNumberConfig:
 
 
 @dataclasses.dataclass
-class SevenSegmentNumberConfig:
+class SevenSegmentConfig:
     digit_config: SevenSegmentDigitConfig = dataclasses.field(default_factory=SevenSegmentDigitConfig)
     number_config: SevenSegmentNumberConfig = dataclasses.field(default_factory=SevenSegmentNumberConfig)
 
@@ -229,9 +229,9 @@ class SevenSegmentDigitDisplay:
 
 
 class SevenSegmentNumber:
-    def __init__(self, n: int, config: SevenSegmentNumberConfig | None = None) -> None:
+    def __init__(self, n: int, config: SevenSegmentConfig | None = None) -> None:
         self.n = n
-        self.config = config or SevenSegmentNumberConfig()
+        self.config = config or SevenSegmentConfig()
 
         self.digits = []
 
