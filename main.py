@@ -262,14 +262,18 @@ class SevenSegmentDisplay:
         self.n = decimal.Decimal(n)
         self.config = config or SevenSegmentDisplayConfig()
 
-        self.digits = []
+        self.digits = self.build_digits()
+
+    def build_digits(self) -> list[SevenSegmentDigitDisplay]:
+        digits = []
 
         if self.n < decimal.Decimal(0):
-            self.digits.append(
-                SevenSegmentDigitDisplay.minus(config=self.config.digit_config)
+            digit = SevenSegmentDigitDisplay.minus(
+                config=self.config.digit_config
             )
+            digits.append(digit)
 
-        a = int(self.n * (10**self.config.number_config.decimal_precision))
+        a = int(self.n * (10**self.precision))
 
         if self.n == decimal.Decimal(0):
             degree = 0
@@ -284,9 +288,11 @@ class SevenSegmentDisplay:
             digit = SevenSegmentDigitDisplay.number(
                 n=k, config=self.config.digit_config
             )
-            self.digits.append(digit)
+            digits.append(digit)
 
             x -= k * e
+
+        return digits
 
     def group_digits(
         self,
@@ -305,19 +311,19 @@ class SevenSegmentDisplay:
         )
 
     def integer_part(self, i: int) -> str:
-        end_index = -self.config.number_config.decimal_precision
+        end_index = -self.precision
         digits = self.digits[0:end_index]
 
         return self.group_digits(digits=digits, i=i)
 
     def decimal_part(self, i: int) -> str:
-        start_index = -self.config.number_config.decimal_precision
+        start_index = -self.precision
         digits = self.digits[start_index:]
 
         return self.group_digits(digits=digits, i=i)
 
     def line(self, i: int) -> str:
-        if self.config.number_config.decimal_precision == 0:
+        if self.precision == 0:
             return self.group_digits(digits=self.digits, i=i)
 
         return "".join(
