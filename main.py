@@ -193,16 +193,26 @@ class SevenSegmentDigit:
 
 class SevenSegmentDigitDisplay:
     def __init__(
-        self, digit: SevenSegmentDigit, config: SevenSegmentDigitConfig | None = None
+        self,
+        digit: SevenSegmentDigit,
+        config: SevenSegmentDigitConfig | None = None,
     ):
         self.digit = digit
         self.config = config or SevenSegmentDigitConfig()
 
     def horizontal_segment(self, value: bool) -> str:
-        return self.config.horizontal_fill if value else self.config.horizontal_empty
+        return (
+            self.config.horizontal_fill
+            if value
+            else self.config.horizontal_empty
+        )
 
     def vertical_segment(self, value: bool) -> str:
-        return self.config.vertical_fill if value else self.config.vertical_empty
+        return (
+            self.config.vertical_fill
+            if value
+            else self.config.vertical_empty
+        )
 
     def vertical_line(self, left: bool, right: bool) -> str:
         return "".join(
@@ -236,7 +246,10 @@ class SevenSegmentDigitDisplay:
         return cls(digit=SevenSegmentDigit.number(n=n), config=config)
 
     @classmethod
-    def minus(cls, config: SevenSegmentDigitConfig | None = None) -> typing.Self:
+    def minus(
+        cls,
+        config: SevenSegmentDigitConfig | None = None,
+    ) -> typing.Self:
         return cls(digit=SevenSegmentDigit.minus(), config=config)
 
 
@@ -275,7 +288,11 @@ class SevenSegmentDisplay:
 
             x -= k * e
 
-    def group_digits(self, digits: list[SevenSegmentDigitDisplay], i: int) -> str:
+    def group_digits(
+        self,
+        digits: list[SevenSegmentDigitDisplay],
+        i: int,
+    ) -> str:
         return self.config.number_config.digit_space.join(
             [digit.lines[i] for digit in digits]
         )
@@ -288,14 +305,16 @@ class SevenSegmentDisplay:
         )
 
     def integer_part(self, i: int) -> str:
-        return self.group_digits(
-            digits=self.digits[0 : -self.config.number_config.decimal_precision], i=i
-        )
+        end_index = -self.config.number_config.decimal_precision
+        digits = self.digits[0:end_index]
+
+        return self.group_digits(digits=digits, i=i)
 
     def decimal_part(self, i: int) -> str:
-        return self.group_digits(
-            digits=self.digits[-self.config.number_config.decimal_precision :], i=i
-        )
+        start_index = -self.config.number_config.decimal_precision
+        digits = self.digits[start_index:]
+
+        return self.group_digits(digits=digits, i=i)
 
     def line(self, i: int) -> str:
         if self.config.number_config.decimal_precision == 0:
