@@ -233,8 +233,12 @@ class SevenSegmentDigitDisplay:
 
 
 class SevenSegmentDisplay:
-    def __init__(self, n: decimal.Decimal, config: SevenSegmentDisplayConfig | None = None) -> None:
-        self.n = n
+    def __init__(
+        self,
+        n: decimal.Decimal | str | float | int,
+        config: SevenSegmentDisplayConfig | None = None,
+    ) -> None:
+        self.n = decimal.Decimal(n)
         self.config = config or SevenSegmentDisplayConfig()
 
         self.digits = []
@@ -287,16 +291,29 @@ class SevenSegmentDisplay:
     def lines(self) -> list[str]:
         return [self.line(i=i) for i in range(5)]
 
-    def __str__(self) -> str:
+    @property
+    def text(self) -> str:
         return "\n".join(self.lines)
+
+    def __str__(self) -> str:
+        return self.text
+
+    @property
+    def precision(self) -> str:
+        return self.config.number_config.decimal_precision
+
+    @property
+    def value(self) -> str:
+        return self.n.quantize(decimal.Decimal(f"0E-{self.precision}"))
+
+    def display(self) -> None:
+        print(self.value)
+        print(self.text)
 
 
 def main():
-    for i in range(-10000, 10000):
-        number = SevenSegmentDisplay(n=decimal.Decimal(i))
-
-        print(number.n.quantize(decimal.Decimal(f"0E-{number.config.number_config.decimal_precision}")))
-        print(number)
+    for n in range(-10000, 10000):
+        SevenSegmentDisplay(n=n).display()
 
 
 if __name__ == "__main__":
