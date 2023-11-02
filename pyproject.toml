@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "seven_segment_display"
+version = "0.1.0"
+description = "Seven Segment Display"
+authors = ["Yasin YILDIZ <yasinyildiza@gmail.com>"]
+readme = "README.md"
+packages = [{include = "seven_segment_display"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.flake8]
+max-line-length = 88
+ignore = "CCR001,W503"
+
+[tool.bandit]
+exclude_dirs = ["tests",]
+severity-level = "low"
+recursive = true
+
+[tool.isort]
+force_single_line = true
+profile = "black"
+
+[tool.pydocstyle]
+ignore = ["D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107", "D203", "D213"]
+
+[tool.mypy]
+install_types = true
+non_interactive = true
+ignore_missing_imports = true
+disallow_untyped_defs = true
+disallow_untyped_calls = true
