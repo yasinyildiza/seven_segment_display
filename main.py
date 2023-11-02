@@ -303,8 +303,12 @@ class SevenSegmentDisplay:
         return self.config.number_config.decimal_precision
 
     @property
+    def exponent(self) -> decimal.Decimal:
+        return decimal.Decimal(f"0E-{self.precision}")
+
+    @property
     def value(self) -> str:
-        return self.n.quantize(decimal.Decimal(f"0E-{self.precision}"))
+        return self.n.quantize(self.exponent)
 
     def display(self) -> None:
         print(self.value)
