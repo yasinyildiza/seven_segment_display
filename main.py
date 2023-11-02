@@ -23,8 +23,12 @@ class SevenSegmentNumberConfig:
 
 @dataclasses.dataclass
 class SevenSegmentDisplayConfig:
-    digit_config: SevenSegmentDigitConfig = dataclasses.field(default_factory=SevenSegmentDigitConfig)
-    number_config: SevenSegmentNumberConfig = dataclasses.field(default_factory=SevenSegmentNumberConfig)
+    digit_config: SevenSegmentDigitConfig = dataclasses.field(
+        default_factory=SevenSegmentDigitConfig
+    )
+    number_config: SevenSegmentNumberConfig = dataclasses.field(
+        default_factory=SevenSegmentNumberConfig
+    )
 
 
 @dataclasses.dataclass
@@ -188,7 +192,9 @@ class SevenSegmentDigit:
 
 
 class SevenSegmentDigitDisplay:
-    def __init__(self, digit: SevenSegmentDigit, config: SevenSegmentDigitConfig | None = None):
+    def __init__(
+        self, digit: SevenSegmentDigit, config: SevenSegmentDigitConfig | None = None
+    ):
         self.digit = digit
         self.config = config or SevenSegmentDigitConfig()
 
@@ -221,14 +227,16 @@ class SevenSegmentDigitDisplay:
         return "\n".join(self.lines)
 
     @classmethod
-    def number(cls, n: int, config: SevenSegmentDigitConfig | None = None) -> typing.Self:
+    def number(
+        cls, n: int, config: SevenSegmentDigitConfig | None = None
+    ) -> typing.Self:
         if not 0 <= n <= 9:
             raise ValueError(f"unsupported number: {n}")
 
         return cls(digit=SevenSegmentDigit.number(n=n), config=config)
 
     @classmethod
-    def minus(cls, config: SevenSegmentDigitConfig | None = None)  -> typing.Self:
+    def minus(cls, config: SevenSegmentDigitConfig | None = None) -> typing.Self:
         return cls(digit=SevenSegmentDigit.minus(), config=config)
 
 
@@ -244,9 +252,11 @@ class SevenSegmentDisplay:
         self.digits = []
 
         if self.n < decimal.Decimal(0):
-            self.digits.append(SevenSegmentDigitDisplay.minus(config=self.config.digit_config))
+            self.digits.append(
+                SevenSegmentDigitDisplay.minus(config=self.config.digit_config)
+            )
 
-        a = int(self.n * (10 ** self.config.number_config.decimal_precision))
+        a = int(self.n * (10**self.config.number_config.decimal_precision))
 
         if self.n == decimal.Decimal(0):
             degree = 0
@@ -258,22 +268,34 @@ class SevenSegmentDisplay:
             e = 10 ** (degree - i)
             k = int(x / e)
 
-            digit = SevenSegmentDigitDisplay.number(n=k, config=self.config.digit_config)
+            digit = SevenSegmentDigitDisplay.number(
+                n=k, config=self.config.digit_config
+            )
             self.digits.append(digit)
 
             x -= k * e
 
     def group_digits(self, digits: list[SevenSegmentDigitDisplay], i: int) -> str:
-        return self.config.number_config.digit_space.join([digit.lines[i] for digit in digits])
+        return self.config.number_config.digit_space.join(
+            [digit.lines[i] for digit in digits]
+        )
 
     def decimal_seperator(self, i: int) -> str:
-        return self.config.number_config.decimal_point if i == 4 else self.config.number_config.decimal_space
+        return (
+            self.config.number_config.decimal_point
+            if i == 4
+            else self.config.number_config.decimal_space
+        )
 
     def integer_part(self, i: int) -> str:
-        return self.group_digits(digits=self.digits[0:-self.config.number_config.decimal_precision], i=i)
+        return self.group_digits(
+            digits=self.digits[0 : -self.config.number_config.decimal_precision], i=i
+        )
 
     def decimal_part(self, i: int) -> str:
-        return self.group_digits(digits=self.digits[-self.config.number_config.decimal_precision:], i=i)
+        return self.group_digits(
+            digits=self.digits[-self.config.number_config.decimal_precision :], i=i
+        )
 
     def line(self, i: int) -> str:
         if self.config.number_config.decimal_precision == 0:
@@ -299,7 +321,7 @@ class SevenSegmentDisplay:
         return self.text
 
     @property
-    def precision(self) -> str:
+    def precision(self) -> int:
         return self.config.number_config.decimal_precision
 
     @property
@@ -307,7 +329,7 @@ class SevenSegmentDisplay:
         return decimal.Decimal(f"0E-{self.precision}")
 
     @property
-    def value(self) -> str:
+    def value(self) -> decimal.Decimal:
         return self.n.quantize(self.exponent)
 
     def display(self) -> None:
